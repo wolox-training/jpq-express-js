@@ -1,23 +1,9 @@
 const requestPromise = require('request-promise');
-const { defaultError } = require('../errors');
+const { endpointJsonPlaceholder } = require('../../config').common.externalApi;
 
-const url = 'https://jsonplaceholder.typicode.com';
+const getAlmbums = () => requestPromise(`${endpointJsonPlaceholder}/albums`);
 
-const getAlmbums = async () => {
-  try {
-    return await requestPromise(`${url}/albums`);
-  } catch (error) {
-    throw defaultError(error.message);
-  }
-};
-
-const getPhotosByUser = async userId => {
-  try {
-    return await requestPromise(`${url}/albums/${userId}/photos`);
-  } catch (error) {
-    throw defaultError(error.message);
-  }
-};
+const getPhotosByUser = userId => requestPromise(`${endpointJsonPlaceholder}/albums/${userId}/photos`);
 
 module.exports = {
   getAlmbums,
