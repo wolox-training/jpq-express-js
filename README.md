@@ -2,6 +2,9 @@
 
 WTraining
 
+## Build Status
+[![Build Status](https://travis-ci.org/wolox-training/jpq-express-js.svg?branch=travis-ci)](https://travis-ci.org/wolox-training/jpq-express-js)
+
 ## First steps
 
 #### Installing node
