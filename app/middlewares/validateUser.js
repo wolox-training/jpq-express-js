@@ -1,14 +1,19 @@
-const { User } = require('../models');
+const { validationResult } = require('express-validator');
+const { validationUserError } = require('../errors');
+const { userAlreadyExists } = require('../services/users');
 
 exports.validateUser = async (req, res, next) => {
-  const regExpMail = '^[a-zA-Z0-9_.+-]+@(?:(?:[a-zA-Z0-9-]+\\.)?[a-zA-Z]+\\.)?(wolox)\\.(co|ar)$';
-  const regExpPassword = '^[a-zA-Z0-9]*$';
+  const { errors } = validationResult(req);
+  const { email } = req.body;
 
-  const userAlreadyExists = await User.findOne({ where: { email: req.body.email } });
-  const validPassword = req.body.password.length > 8 && req.body.password.match(regExpPassword);
+  const user = await userAlreadyExists(email);
 
-  if (userAlreadyExists !== null) next(new Error('The user with email has exists'));
+  if (user !== null) next(validationUserError(`The email ${email} already exists`));
 
-  if (req.body.email.match(regExpMail) && validPassword) next();
-  next(new Error('Email or password incorrect'));
+  if (errors.length > 0) {
+    const errorsMessages = errors.map(error => error.msg);
+    next(validationUserError(`Errors: ${errorsMessages}`));
+  }
+
+  next();
 };
