@@ -2,7 +2,7 @@ const { User } = require('../models');
 const { databaseError } = require('../errors');
 const logger = require('../logger/index');
 
-const userAlreadyExists = email =>
+const findUserByEmail = email =>
   User.findOne({ where: { email } }).catch(error => {
     throw databaseError(error.message);
   });
@@ -19,6 +19,6 @@ const signUp = (email, password, name, lastName) =>
     });
 
 module.exports = {
-  userAlreadyExists,
+  findUserByEmail,
   signUp
 };
