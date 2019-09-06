@@ -4,6 +4,7 @@ const supertest = require('supertest');
 const app = require('../app');
 const { mockUser, mockUserWrongPassword, mockUserMissingParams } = require('./mocks/user');
 const { validationUserError } = require('../app/errors');
+const { createToken } = require('../app/helpers/jwt');
 
 const request = supertest(app);
 
@@ -49,6 +50,18 @@ describe('Test /users', () => {
           'Errors: password is a required field,name is a required field'
         );
         expect(response.statusCode).toBe(500);
+      });
+  });
+});
+
+describe('Test /users/sessions', () => {
+  it('sign in user with  correct params', () => {
+    request
+      .post('/users/sessions')
+      .send(mockUser)
+      .then(response => {
+        expect(response.body).to.include({ token: createToken(mockUser) });
+        expect(response.statusCode).toBe(200);
       });
   });
 });
