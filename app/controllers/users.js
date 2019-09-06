@@ -10,7 +10,9 @@ const signUpRequest = (req, res, next) => {
     .then(user => {
       res.send(`The user ${user.name} ${user.lastName} was successfully created`);
     })
-    .catch(next);
+    .catch(error => {
+      next(error);
+    });
 };
 
 module.exports = {
