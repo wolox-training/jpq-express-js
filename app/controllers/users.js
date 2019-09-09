@@ -1,4 +1,4 @@
-const { signUp } = require('../services/users');
+const { signUp, getUsers } = require('../services/users');
 const { encryptPassword } = require('../helpers/bcrypt');
 
 const signUpRequest = (req, res, next) => {
@@ -13,6 +13,15 @@ const signUpRequest = (req, res, next) => {
     .catch(next);
 };
 
+const getUsersRequest = (req, res, next) => {
+  const { limit, offset } = req.query;
+  console.log(limit, offset);
+  getUsers(limit, offset)
+    .then(users => res.send(users))
+    .catch(next);
+};
+
 module.exports = {
-  signUpRequest
+  signUpRequest,
+  getUsersRequest
 };
