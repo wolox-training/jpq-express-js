@@ -2,7 +2,7 @@ const { validationResult } = require('express-validator');
 const { validationUserError } = require('../errors');
 const { findUserByEmail } = require('../services/users');
 
-exports.validateUser = async (req, res, next) => {
+const validateUser = async (req, res, next) => {
   const { errors } = validationResult(req);
   const { email } = req.body;
 
@@ -16,4 +16,8 @@ exports.validateUser = async (req, res, next) => {
   }
 
   next();
+};
+
+module.exports = {
+  validateUser
 };

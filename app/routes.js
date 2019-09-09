@@ -11,4 +11,5 @@ exports.init = app => {
   app.get('/albums', getAlmbums);
   app.get('/albums/:id/photos', getPhotosByUser);
   app.post('/users', checkSchema(userSchema), validateUser, signUpRequest);
+  app.post('/admin/users', checkSchema(userSchema), validateUser, signUpRequest);
 };
