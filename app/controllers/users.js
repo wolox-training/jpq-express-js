@@ -1,4 +1,4 @@
-const { signUp, findUserByEmail } = require('../services/users');
+const { signUp, findUserByEmail, getUsers } = require('../services/users');
 const { encryptPassword } = require('../helpers/bcrypt');
 const { createToken } = require('../helpers/jwt');
 
@@ -22,7 +22,15 @@ const signInRequest = async (req, res) => {
   res.send({ token: createToken(user) });
 };
 
+const getUsersRequest = (req, res, next) => {
+  const { limit, offset } = req.query;
+  getUsers(limit, offset)
+    .then(users => res.send(users))
+    .catch(next);
+};
+
 module.exports = {
   signUpRequest,
-  signInRequest
+  signInRequest,
+  getUsersRequest
 };

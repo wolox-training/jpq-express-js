@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 const { validationUserError } = require('../errors');
 const { findUserByEmail } = require('../services/users');
+const { decodeToken } = require('../helpers/jwt');
 
 const validateUser = async (req, res, next) => {
   const { errors } = validationResult(req);
@@ -18,6 +19,20 @@ const validateUser = async (req, res, next) => {
   next();
 };
 
+const userIsAuth = (req, res, next) => {
+  if (!req.headers.authorization) throw validationUserError('The authorization token is required');
+
+  const token = req.headers.authorization.split(' ')[1];
+
+  decodeToken(token)
+    .then(payload => {
+      req.user = payload;
+      next();
+    })
+    .catch(next);
+};
+
 module.exports = {
-  validateUser
+  validateUser,
+  userIsAuth
 };

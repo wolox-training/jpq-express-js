@@ -17,8 +17,14 @@ const mockUserWrongPassword = {
   password: faker.internet.password(5)
 };
 
+const authorizationToken = {
+  authorization:
+    'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjYwLCJlbWFpbCI6Imp1YW5wYWJsby5xdWljZW5vQHdvbG94LmNvbS5hciIsImlhdCI6MTU2ODA1ODQ2NH0.d-zcu7yZfTSLoj2iGJeM9NsL4s4DnODJU3LtA0UfzCQ'
+};
+
 module.exports = {
   mockUser,
   mockUserWrongPassword,
-  mockUserMissingParams
+  mockUserMissingParams,
+  authorizationToken
 };
