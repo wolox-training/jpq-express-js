@@ -1,4 +1,5 @@
 const faker = require('faker');
+const { createToken } = require('../../app/helpers/jwt');
 
 const mockUser = {
   email: faker.internet.email(null, null, 'wolox.com.ar'),
@@ -17,8 +18,13 @@ const mockUserWrongPassword = {
   password: faker.internet.password(5)
 };
 
+const authorizationToken = {
+  authorization: `Bearer ${createToken(mockUser)}`
+};
+
 module.exports = {
   mockUser,
   mockUserWrongPassword,
-  mockUserMissingParams
+  mockUserMissingParams,
+  authorizationToken
 };
