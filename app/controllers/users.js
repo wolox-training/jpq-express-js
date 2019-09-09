@@ -15,7 +15,6 @@ const signUpRequest = (req, res, next) => {
 
 const getUsersRequest = (req, res, next) => {
   const { limit, offset } = req.query;
-  console.log(limit, offset);
   getUsers(limit, offset)
     .then(users => res.send(users))
     .catch(next);
