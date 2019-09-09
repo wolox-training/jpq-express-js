@@ -4,17 +4,20 @@ const supertest = require('supertest');
 const app = require('../app');
 const { mockUser, mockUserWrongPassword, mockUserMissingParams } = require('./mocks/user');
 const { validationUserError } = require('../app/errors');
+const { User } = require('../app/models');
 const { createToken } = require('../app/helpers/jwt');
 
 const request = supertest(app);
 
 describe('Test /users', () => {
   it('created user with correct params', () => {
+    const { email } = mockUser;
     request
       .post('/users')
       .send(mockUser)
-      .then(response => {
+      .then(async response => {
         expect(response.statusCode).toBe(200);
+        expect(await User.findOne({ where: { email } })).toBe(mockUser);
       });
   });
 
@@ -25,7 +28,7 @@ describe('Test /users', () => {
       .then(response => {
         expect(response.body).to.include(validationUserError);
         expect(response.body.message).to.include(`The email ${mockUser.email} already exists`);
-        expect(response.statusCode).toBe(500);
+        expect(response.statusCode).toBeOneOf([400, 409]);
       });
   });
 
@@ -36,7 +39,7 @@ describe('Test /users', () => {
       .then(response => {
         expect(response.body).to.include(validationUserError);
         expect(response.body.message).to.include('Password should be at least 8 chars long');
-        expect(response.statusCode).toBe(500);
+        expect(response.statusCode).toBeOneOf([400, 422]);
       });
   });
 
@@ -49,7 +52,7 @@ describe('Test /users', () => {
         expect(response.body.message).to.include(
           'Errors: password is a required field,name is a required field'
         );
-        expect(response.statusCode).toBe(500);
+        expect(response.statusCode).toBe(400);
       });
   });
 });
