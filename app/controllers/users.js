@@ -1,5 +1,6 @@
-const { signUp } = require('../services/users');
+const { signUp, findUserByEmail } = require('../services/users');
 const { encryptPassword } = require('../helpers/bcrypt');
+const { createToken } = require('../helpers/jwt');
 
 const signUpRequest = (req, res, next) => {
   const { email, password, name, lastName } = req.body;
@@ -13,6 +14,15 @@ const signUpRequest = (req, res, next) => {
     .catch(next);
 };
 
+const signInRequest = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await findUserByEmail(email);
+
+  res.send({ token: createToken(user) });
+};
+
 module.exports = {
-  signUpRequest
+  signUpRequest,
+  signInRequest
 };
