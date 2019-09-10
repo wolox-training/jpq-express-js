@@ -7,6 +7,7 @@ const createToken = user => {
   const payload = {
     sub: user.id,
     email: user.email,
+    isAdmin: user.isAdmin,
     iat: moment().unix()
   };
 
