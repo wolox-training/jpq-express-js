@@ -4,10 +4,12 @@ const { externalError } = require('../errors');
 
 const getAlmbums = id => {
   const url = id ? `${endpointJsonPlaceholder}/albums/${id}` : `${endpointJsonPlaceholder}/albums`;
-  return requestPromise(url).catch(error => {
-    const message = error.statusCode === 404 ? `The album with id ${id} doesn't exists` : error.message;
-    throw externalError(message);
-  });
+  return requestPromise(url)
+    .then(almbums => JSON.parse(almbums))
+    .catch(error => {
+      const message = error.statusCode === 404 ? `The album with id ${id} doesn't exists` : error.message;
+      throw externalError(message);
+    });
 };
 
 const getPhotosByUser = userId =>

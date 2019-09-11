@@ -1,7 +1,7 @@
 const { checkSchema } = require('express-validator');
 
 const { healthCheck } = require('./controllers/healthCheck');
-const { getAlmbums, getPhotosByUser, buyAlbumRequest } = require('./controllers/albums');
+const { getAlmbums, getPhotosByUser, buyAlbumRequest, getBuyedAlbums } = require('./controllers/albums');
 const { signUpRequest, signInRequest, getUsersRequest, userAdminRequest } = require('./controllers/users');
 const { validateUser, userIsAuth, validateAdminUser } = require('./middlewares/validateUser');
 const { validateSignIn } = require('./middlewares/validateSignIn');
@@ -12,6 +12,7 @@ exports.init = app => {
   app.get('/albums', getAlmbums);
   app.post('/albums/:id', userIsAuth, buyAlbumRequest);
   app.get('/albums/:id/photos', getPhotosByUser);
+  app.get('/users/:id/albums', userIsAuth, getBuyedAlbums);
   app.post('/users', checkSchema(userSchema), validateUser, signUpRequest);
   app.get('/users', userIsAuth, getUsersRequest);
   app.post('/users/sessions', checkSchema(userSignInSchema), validateSignIn, signInRequest);
