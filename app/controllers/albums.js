@@ -18,15 +18,14 @@ const getPhotosByUser = (req, res, next) => {
 
 const buyAlbumRequest = async (req, res, next) => {
   const { id } = req.params;
+  const { user } = req.user;
 
   try {
     const album = await albumService.getAlmbums(id);
 
-    const albumJson = JSON.parse(album);
+    await create(user.userId, album.id);
 
-    await create(req.user.sub, albumJson.id);
-
-    res.send(`The album ${albumJson.title} was buyed by user ${req.user.email}`);
+    res.send(`The album ${album.title} was buyed by user ${user.email}`);
   } catch (error) {
     next(error);
   }

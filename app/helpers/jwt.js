@@ -6,6 +6,7 @@ const { tokenError } = require('../errors');
 const createToken = user => {
   const payload = {
     sub: user.id,
+    userId: user.id,
     email: user.email,
     isAdmin: user.isAdmin,
     iat: moment().unix()
