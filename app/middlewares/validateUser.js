@@ -20,16 +20,13 @@ const validateUser = async (req, res, next) => {
 };
 
 const userIsAuth = (req, res, next) => {
-  if (!req.headers.authorization) throw validationUserError('The authorization token is required');
+  const { authorization } = req.headers;
+  if (!authorization) throw validationUserError('The authorization token is required');
 
-  const token = req.headers.authorization.split(' ')[1];
+  const token = authorization.split(' ')[1];
 
-  decodeToken(token)
-    .then(payload => {
-      req.user = payload;
-      next();
-    })
-    .catch(next);
+  req.user = decodeToken(token);
+  next();
 };
 
 module.exports = {
