@@ -17,5 +17,6 @@ exports.validateSignIn = async (req, res, next) => {
     next(validationUserError(`Errors: ${errorsMessages}`));
   }
 
+  req.user = user;
   next();
 };
