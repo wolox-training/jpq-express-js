@@ -45,6 +45,9 @@ const config = {
     },
     externalApi: {
       endpointJsonPlaceholder: process.env.ENDPOINT_JSON_PLACEHOLDER
+    },
+    auth: {
+      secret: process.env.SECRET_TOKEN
     }
   }
 };

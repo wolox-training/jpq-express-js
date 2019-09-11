@@ -46,6 +46,31 @@ const userSchema = {
   }
 };
 
+const userSignInSchema = {
+  email: {
+    in: ['body'],
+    isEmail: {
+      errorMessage: 'email is a invalid field'
+    },
+    isEmpty: {
+      errorMessage: 'email is a required field',
+      negated: true
+    },
+    matches: {
+      options: [regExpEmail],
+      errorMessage: 'The email domain is incorrect'
+    }
+  },
+  password: {
+    in: ['body'],
+    isEmpty: {
+      errorMessage: 'password is a required field',
+      negated: true
+    }
+  }
+};
+
 module.exports = {
-  userSchema
+  userSchema,
+  userSignInSchema
 };
