@@ -116,3 +116,25 @@ describe('Test /admin/users', () => {
       });
   });
 });
+
+describe('Expiration token', () => {
+  it('Request authorization token', () => {
+    request
+      .post('/users/sessions')
+      .send(mockUserAdmin)
+      .then(response => {
+        expect(response.body).to.include(createToken(mockUser));
+        expect(response.statusCode).toBe(200);
+      });
+  });
+
+  it('GET /users authorization token with expedation date invalid', () => {
+    request
+      .get('/users')
+      .set(authorizationToken)
+      .then(response => {
+        expect(response.body.message).toBe('The token was expired');
+        expect(response.statusCode).toBe(400);
+      });
+  });
+});

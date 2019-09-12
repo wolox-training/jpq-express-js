@@ -17,7 +17,7 @@ const signUpRequest = (req, res, next) => {
 const signInRequest = (req, res) => {
   const { user } = req;
 
-  res.send({ token: createToken(user) });
+  res.send(createToken(user));
 };
 
 const getUsersRequest = (req, res, next) => {
