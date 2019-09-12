@@ -14,3 +14,6 @@ exports.externalError = message => internalError(message, exports.EXTERNAL_ERROR
 
 exports.VALIDATION_USER_ERROR = 'validation_user_error';
 exports.validationUserError = message => internalError(message, exports.VALIDATION_USER_ERROR);
+
+exports.TOKEN_ERROR = 'token_error';
+exports.tokenError = message => internalError(message, exports.TOKEN_ERROR);

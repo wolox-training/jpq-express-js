@@ -18,7 +18,17 @@ const signUp = (email, password, name, lastName) =>
       throw databaseError(error.message);
     });
 
+const getUsers = (limit = 10, offset = 0) =>
+  User.findAll({
+    limit,
+    offset,
+    attributes: ['id', 'name', 'lastName', 'email']
+  }).catch(error => {
+    throw databaseError(error.message);
+  });
+
 module.exports = {
   findUserByEmail,
-  signUp
+  signUp,
+  getUsers
 };

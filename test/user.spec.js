@@ -2,10 +2,15 @@
 
 const supertest = require('supertest');
 const app = require('../app');
-const { mockUser, mockUserWrongPassword, mockUserMissingParams } = require('./mocks/user');
-const { validationUserError } = require('../app/errors');
-const { createToken } = require('../app/helpers/jwt');
+const {
+  mockUser,
+  mockUserWrongPassword,
+  mockUserMissingParams,
+  authorizationToken
+} = require('./mocks/user');
+const { validationUserError, tokenError } = require('../app/errors');
 const { User } = require('../app/models');
+const { createToken } = require('../app/helpers/jwt');
 
 const request = supertest(app);
 
@@ -53,6 +58,22 @@ describe('Test /users', () => {
           'Errors: password is a required field,name is a required field'
         );
         expect(response.statusCode).toBe(400);
+      });
+  });
+
+  it('GET /users without authorization token', () => {
+    request.get('/users').then(response => {
+      expect(response.body).to.include(tokenError);
+      expect(response.statusCode).toBe(400);
+    });
+  });
+
+  it('GET /users with authorization token', () => {
+    request
+      .get('/users')
+      .set(authorizationToken)
+      .then(response => {
+        expect(response.statusCode).toBe(200);
       });
   });
 });
