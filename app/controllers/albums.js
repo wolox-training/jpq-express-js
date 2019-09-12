@@ -1,6 +1,7 @@
 const albumService = require('../services/album');
 const { create, getAlbumsIdsByUser } = require('../services/usersAlbum');
-const { formatResponseAlbums } = require('../helpers/formats');
+const { formatResponseAlbums, formatResponsePhotos } = require('../helpers/formats');
+const { getPhotos } = require('../services/photos');
 
 const getAlmbums = (_, res, next) => {
   albumService
@@ -48,9 +49,25 @@ const getBuyedAlbums = async (req, res, next) => {
   res.send(formatResponseAlbums(albumsByUser));
 };
 
+const getPhotosOfBuyedAlbums = async (req, res, next) => {
+  const { id } = req.params;
+  const { user } = req;
+
+  if (!id) next('The userId is a required param');
+
+  const photos = await getPhotos();
+
+  const albumIds = await getAlbumsIdsByUser(user.sub);
+
+  const photosByUser = photos.filter(photo => albumIds.includes(photo.albumId));
+
+  res.send(formatResponsePhotos(photosByUser));
+};
+
 module.exports = {
   getAlmbums,
   getPhotosByUser,
   buyAlbumRequest,
-  getBuyedAlbums
+  getBuyedAlbums,
+  getPhotosOfBuyedAlbums
 };

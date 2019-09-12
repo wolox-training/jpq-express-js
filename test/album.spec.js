@@ -6,6 +6,7 @@ const { authorizationToken } = require('./mocks/user');
 const { mockUserAlbum, mockUserAlbumInvalid } = require('./mocks/album');
 const { UserAlbum } = require('../app/models');
 const { getAlmbums } = require('../app/services/album');
+const { getPhotos } = require('../app/services/photos');
 const { validationUserError } = require('../app/errors');
 
 const request = supertest(app);
@@ -80,5 +81,27 @@ describe('Test /users/:id/albums', () => {
       expect(response.body.message).to.include('The authorization token is required');
       expect(response.statusCode).toBe(400);
     });
+  });
+});
+
+describe('Test /users/albums/:id/photos', () => {
+  it('Get photos of buyed albums without authorization token', () => {
+    const { userId } = mockUserAlbum;
+    request.post(`/users/albums/${userId}/photos`).then(response => {
+      expect(response.body).to.include(validationUserError);
+      expect(response.body.message).to.include('The authorization token is required');
+      expect(response.statusCode).toBe(400);
+    });
+  });
+
+  it('Get photos of buyed albums', () => {
+    const { userId } = mockUserAlbum;
+    request
+      .post(`/users/albums/${userId}/photos`)
+      .set(authorizationToken)
+      .then(async response => {
+        expect(response.statusCode).toBe(200);
+        expect(await getPhotos()).tobe(response.body);
+      });
   });
 });
