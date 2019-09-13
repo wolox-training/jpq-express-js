@@ -8,7 +8,13 @@ const {
   getBuyedAlbums,
   getPhotosOfBuyedAlbums
 } = require('./controllers/albums');
-const { signUpRequest, signInRequest, getUsersRequest, userAdminRequest } = require('./controllers/users');
+const {
+  signUpRequest,
+  signInRequest,
+  getUsersRequest,
+  userAdminRequest,
+  invalidateAllSessionRequest
+} = require('./controllers/users');
 const { validateUser, userIsAuth, validateAdminUser } = require('./middlewares/validateUser');
 const { validateSignIn } = require('./middlewares/validateSignIn');
 const { userSchema, userSignInSchema } = require('./validator/userSchema');
@@ -32,4 +38,5 @@ exports.init = app => {
     validateAdminUser,
     userAdminRequest
   );
+  app.post('/users/sessions/invalidate_all', invalidateAllSessionRequest);
 };
