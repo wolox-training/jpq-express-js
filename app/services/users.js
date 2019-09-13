@@ -7,8 +7,8 @@ const findUserByEmail = email =>
     throw databaseError(error.message);
   });
 
-const signUp = (email, password, name, lastName) =>
-  User.create({ email, password, name, lastName })
+const signUp = user =>
+  User.create(user)
     .then(result => {
       logger.info(`The user ${result.dataValues.name} ${result.dataValues.latName} was successfully created`);
       return result.dataValues;
@@ -22,13 +22,25 @@ const getUsers = (limit = 10, offset = 0) =>
   User.findAll({
     limit,
     offset,
-    attributes: ['id', 'name', 'lastName', 'email']
+    attributes: ['id', 'name', 'lastName', 'email', 'isAdmin']
   }).catch(error => {
     throw databaseError(error.message);
   });
 
+const updateIsAdminUser = id =>
+  User.update({ isAdmin: true }, { where: { id } })
+    .then(result => {
+      logger.info('The user now is admin !!');
+      return result.dataValues;
+    })
+    .catch(error => {
+      logger.error(error.message);
+      throw databaseError(error.message);
+    });
+
 module.exports = {
   findUserByEmail,
   signUp,
-  getUsers
+  getUsers,
+  updateIsAdminUser
 };

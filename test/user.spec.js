@@ -6,7 +6,8 @@ const {
   mockUser,
   mockUserWrongPassword,
   mockUserMissingParams,
-  authorizationToken
+  authorizationToken,
+  mockUserAdmin
 } = require('./mocks/user');
 const { validationUserError, tokenError } = require('../app/errors');
 const { User } = require('../app/models');
@@ -85,6 +86,32 @@ describe('Test /users/sessions', () => {
       .send(mockUser)
       .then(response => {
         expect(response.body).to.include({ token: createToken(mockUser) });
+        expect(response.statusCode).toBe(200);
+      });
+  });
+});
+
+describe('Test /admin/users', () => {
+  it('request without token', () => {
+    request
+      .post('/admin/users')
+      .send(mockUserAdmin)
+      .then(response => {
+        expect(response.body).to.include(validationUserError);
+        expect(response.body.message).to.include('The authorization token is required');
+        expect(response.statusCode).toBe(400);
+      });
+  });
+
+  it('request with valid token', () => {
+    request
+      .post('/admin/users')
+      .set(authorizationToken)
+      .send(mockUserAdmin)
+      .then(response => {
+        expect(response.body.message).to.include(
+          `The user ${mockUserAdmin.name} ${mockUserAdmin.lastName} now is admin`
+        );
         expect(response.statusCode).toBe(200);
       });
   });
