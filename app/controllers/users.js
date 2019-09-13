@@ -36,14 +36,14 @@ const userAdminRequest = async (req, res, next) => {
     const hashedPassword = encryptPassword(password);
     const isAdmin = true;
 
-    signUp({ email, password: hashedPassword, name, lastName, isAdmin })
+    return signUp({ email, password: hashedPassword, name, lastName, isAdmin })
       .then(newUser => {
         res.send(`The user ${newUser.name} ${newUser.lastName} was successfully created`);
       })
       .catch(next);
   }
 
-  updateIsAdminUser(user.id)
+  return updateIsAdminUser(user.id)
     .then(res.send(`The user ${user.name} ${user.lastName} now is admin`))
     .catch(next);
 };

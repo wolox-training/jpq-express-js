@@ -16,17 +16,13 @@ const createToken = user => {
 };
 
 const decodeToken = token => {
-  const decoded = new Promise((resolve, reject) => {
-    try {
-      const payload = jwt.decode(token, secret);
+  try {
+    const payload = jwt.decode(token, secret);
 
-      resolve(payload);
-    } catch (error) {
-      reject(tokenError(error.message));
-    }
-  });
-
-  return decoded;
+    return payload;
+  } catch (error) {
+    throw tokenError(error.message);
+  }
 };
 
 module.exports = {
