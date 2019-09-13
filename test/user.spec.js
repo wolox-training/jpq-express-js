@@ -11,6 +11,7 @@ const {
 } = require('./mocks/user');
 const { validationUserError, tokenError } = require('../app/errors');
 const { User } = require('../app/models');
+const { invalidateAllSessions } = require('../app/services/expirationToken');
 const { createToken } = require('../app/helpers/jwt');
 
 const request = supertest(app);
@@ -75,6 +76,18 @@ describe('Test /users', () => {
       .set(authorizationToken)
       .then(response => {
         expect(response.statusCode).toBe(200);
+      });
+  });
+
+  it('GET /users with authorization token expired', () => {
+    request
+      .get('/users')
+      .set(authorizationToken)
+      .then(invalidateAllSessions())
+      .then(response => {
+        expect(response.body).to.include(validationUserError);
+        expect(response.body.message).to.include('The token was expired');
+        expect(response.statusCode).toBe(400);
       });
   });
 });
