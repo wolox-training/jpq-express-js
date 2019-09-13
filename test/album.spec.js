@@ -5,7 +5,7 @@ const app = require('../app');
 const { authorizationToken } = require('./mocks/user');
 const { mockUserAlbum, mockUserAlbumInvalid } = require('./mocks/album');
 const { UserAlbum } = require('../app/models');
-const { getAlmbums } = require('../app/services/album');
+const { getAlbums } = require('../app/services/album');
 const { validationUserError } = require('../app/errors');
 
 const request = supertest(app);
@@ -17,10 +17,10 @@ describe('Test /albums', () => {
       .post(`/albums/${albumId}`)
       .set(authorizationToken)
       .send(mockUserAlbum)
-      .then(getAlmbums(albumId))
+      .then(getAlbums(albumId))
       .then(async response => {
         expect(response.statusCode).toBe(200);
-        expect(await UserAlbum.findOne({ where: mockUserAlbum })).tobe(mockUserAlbum);
+        expect(await UserAlbum.findOne({ where: mockUserAlbum })).toBe(mockUserAlbum);
       });
   });
 
@@ -28,7 +28,7 @@ describe('Test /albums', () => {
     request
       .post(`/albums/${mockUserAlbum.albumId}`)
       .send(mockUserAlbum)
-      .then(getAlmbums(mockUserAlbum.albumId))
+      .then(getAlbums(mockUserAlbum.albumId))
       .then(response => {
         expect(response.body).to.include(validationUserError);
         expect(response.body.message).to.include('The authorization token is required');
@@ -42,7 +42,7 @@ describe('Test /albums', () => {
       .post(`/albums/${albumId}`)
       .set(authorizationToken)
       .send(mockUserAlbumInvalid)
-      .then(getAlmbums(albumId))
+      .then(getAlbums(albumId))
       .then(response => {
         expect(response.statusCode).toBe(400);
         expect(response.body.message).toBe(`The album with id ${albumId} doesn't exists`);
