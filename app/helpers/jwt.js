@@ -5,7 +5,7 @@ const { expired_quantity, expired_measure } = require('../../config').common.ses
 const { tokenError } = require('../errors');
 
 const createToken = user => {
-  const expiredOn = moment().add(expired_quantity, expired_measure);
+  const expireOn = moment().add(expired_quantity, expired_measure);
 
   const payload = {
     sub: user.id,
@@ -13,12 +13,12 @@ const createToken = user => {
     email: user.email,
     isAdmin: user.isAdmin,
     iat: moment().unix(),
-    exp: expiredOn.unix()
+    exp: expireOn.unix()
   };
 
   return {
     token: jwt.encode(payload, secret),
-    expired_on: expiredOn.format('YYYY-MM-DD HH:mm:ss')
+    expire_on: expireOn.format('YYYY-MM-DD HH:mm:ss')
   };
 };
 
