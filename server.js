@@ -12,4 +12,4 @@ Promise.resolve()
 
     logger.info(`Listening on port: ${port}`);
   })
-  .catch(logger.error);
+  .catch(error => logger.error(error.message));

@@ -1,11 +1,14 @@
 const requestPromise = require('request-promise');
 const { endpointJsonPlaceholder } = require('../../config').common.externalApi;
 const { externalError } = require('../errors');
+const { handleError } = require('../serializers/errorsAlbums');
 
-const getAlmbums = () =>
-  requestPromise(`${endpointJsonPlaceholder}/albums`).catch(error => {
-    throw externalError(error.message);
+const getAlbums = id => {
+  const url = id ? `${endpointJsonPlaceholder}/albums/${id}` : `${endpointJsonPlaceholder}/albums`;
+  return requestPromise(url, { json: true }).catch(error => {
+    handleError(error, id);
   });
+};
 
 const getPhotosByUser = userId =>
   requestPromise(`${endpointJsonPlaceholder}/albums/${userId}/photos`).catch(error => {
@@ -13,6 +16,6 @@ const getPhotosByUser = userId =>
   });
 
 module.exports = {
-  getAlmbums,
+  getAlbums,
   getPhotosByUser
 };
