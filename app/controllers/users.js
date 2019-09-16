@@ -1,6 +1,7 @@
 const { signUp, findUserByEmail, getUsers, updateIsAdminUser } = require('../services/users');
 const { encryptPassword } = require('../helpers/bcrypt');
 const { createToken } = require('../helpers/jwt');
+const { sendEmail } = require('../serializers/email');
 
 const signUpRequest = (req, res, next) => {
   const { email, password, name, lastName } = req.body;
@@ -9,7 +10,8 @@ const signUpRequest = (req, res, next) => {
 
   signUp({ email, password: hashedPassword, name, lastName })
     .then(user => {
-      res.send(`The user ${user.name} ${user.lastName} was successfully created`);
+      sendEmail(email, `Welcome ${name} ${lastName}`, 'Wolox Training');
+      return res.send(`The user ${user.name} ${user.lastName} was successfully created`);
     })
     .catch(next);
 };
