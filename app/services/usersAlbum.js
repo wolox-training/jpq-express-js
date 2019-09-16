@@ -13,6 +13,18 @@ const create = (userId, albumId) =>
       throw databaseError(error.message);
     });
 
+const getAlbumsIdsByUser = userId =>
+  UserAlbum.findAll({
+    where: { userId },
+    attributes: ['id', 'userId', 'albumId']
+  })
+    .then(albums => albums.map(album => album.albumId))
+    .catch(error => {
+      logger.error(error.message);
+      throw databaseError(error.message);
+    });
+
 module.exports = {
-  create
+  create,
+  getAlbumsIdsByUser
 };

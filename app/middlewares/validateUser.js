@@ -34,8 +34,17 @@ const validateAdminUser = async (req, res, next) => {
   next();
 };
 
+const validateUserId = (req, res, next) => {
+  const { id } = req.params;
+
+  if (!id) next('The userId is a required param');
+
+  next();
+};
+
 module.exports = {
   validateUser,
   userIsAuth,
-  validateAdminUser
+  validateAdminUser,
+  validateUserId
 };
