@@ -31,26 +31,23 @@ const buyAlbumRequest = async (req, res, next) => {
   }
 };
 
-const getBuyedAlbums = async (req, res, next) => {
-  const { id } = req.params;
+const getBoughtAlbums = async (req, res) => {
   const { user } = req;
 
-  if (!id) next('The userId is a required param');
+  const allAlbums = await albumService.getAlbums();
 
-  const allAlbums = await albumService.getAlmbums();
-
-  if (user.isAdmin) res.send(formatResponseAlbums(allAlbums));
+  if (user.isAdmin) return res.send(formatResponseAlbums(allAlbums));
 
   const albumIds = await getAlbumsIdsByUser(user.sub);
 
   const albumsByUser = allAlbums.filter(album => albumIds.includes(album.id));
 
-  res.send(formatResponseAlbums(albumsByUser));
+  return res.send(formatResponseAlbums(albumsByUser));
 };
 
 module.exports = {
   getAlbums,
   getPhotosByUser,
   buyAlbumRequest,
-  getBuyedAlbums
+  getBoughtAlbums
 };
