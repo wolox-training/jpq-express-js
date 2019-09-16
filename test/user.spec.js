@@ -12,16 +12,18 @@ const {
 const { validationUserError, tokenError } = require('../app/errors');
 const { User } = require('../app/models');
 const { createToken } = require('../app/helpers/jwt');
+const { sendEmail } = require('../app/serializers/email');
 
 const request = supertest(app);
 
 describe('Test /users', () => {
   it('created user with correct params', () => {
-    const { email } = mockUser;
+    const { email, name, lastName } = mockUser;
     request
       .post('/users')
       .send(mockUser)
       .then(async response => {
+        expect(sendEmail(email, `Welcome ${name} ${lastName}`, 'Wolox Training')).toBe('250 2.0.0 OK');
         expect(response.statusCode).toBe(200);
         expect(await User.findOne({ where: { email } })).toBe(mockUser);
       });
