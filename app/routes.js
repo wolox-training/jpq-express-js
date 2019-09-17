@@ -2,7 +2,7 @@ const { checkSchema } = require('express-validator');
 
 const { healthCheck } = require('./controllers/healthCheck');
 const {
-  getAlmbums,
+  getAlbums,
   getPhotosByUser,
   buyAlbumRequest,
   getBuyedAlbums,
@@ -22,7 +22,7 @@ const { expressValidator } = require('./middlewares/expressValidator');
 
 exports.init = app => {
   app.get('/health', healthCheck);
-  app.get('/albums', getAlmbums);
+  app.get('/albums', getAlbums);
   app.post('/albums/:id', userIsAuth, buyAlbumRequest);
   app.get('/albums/:id/photos', getPhotosByUser);
   app.get('/users/:id/albums', userIsAuth, getBuyedAlbums);
