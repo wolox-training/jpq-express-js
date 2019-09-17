@@ -1,6 +1,9 @@
+const moment = require('moment');
 const { validationUserError } = require('../errors');
 const { findUserByEmail } = require('../services/users');
+const { getLastInvalidation } = require('../services/expirationToken');
 const { decodeToken } = require('../helpers/jwt');
+const { tokenError } = require('../errors');
 
 const validateUser = async (req, res, next) => {
   const { email } = req.body;
@@ -12,13 +15,19 @@ const validateUser = async (req, res, next) => {
   next();
 };
 
-const userIsAuth = (req, res, next) => {
+const userIsAuth = async (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization) throw validationUserError('The authorization token is required');
 
-  const token = authorization.split(' ')[1];
+  const lastInvalidationToken = await getLastInvalidation();
 
-  req.user = decodeToken(token);
+  const token = authorization.split(' ')[1];
+  const payload = decodeToken(token);
+
+  if (lastInvalidationToken !== null && moment(lastInvalidationToken.expiredOn).unix() >= payload.iat)
+    next(tokenError('The token was expired'));
+
+  req.user = payload;
   next();
 };
 

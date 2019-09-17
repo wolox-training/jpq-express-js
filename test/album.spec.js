@@ -6,6 +6,7 @@ const { authorizationToken } = require('./mocks/user');
 const { mockUserAlbum, mockUserAlbumInvalid } = require('./mocks/album');
 const { UserAlbum } = require('../app/models');
 const { getAlbums } = require('../app/services/album');
+const { getPhotos } = require('../app/services/photos');
 const { validationUserError } = require('../app/errors');
 
 const request = supertest(app);
@@ -46,6 +47,61 @@ describe('Test /albums', () => {
       .then(response => {
         expect(response.statusCode).toBe(400);
         expect(response.body.message).toBe(`The album with id ${albumId} doesn't exists`);
+      });
+  });
+});
+
+describe('Test /users/:id/albums', () => {
+  it('Get buyed albums admin user', () => {
+    const { userId } = mockUserAlbum;
+    request
+      .post(`/users/${userId}/albums`)
+      .set(authorizationToken)
+      .then(async response => {
+        expect(response.statusCode).toBe(200);
+        expect(await getAlbums()).tobe(response.body);
+      });
+  });
+
+  it('Get buyed albums regular user', () => {
+    const { userId } = mockUserAlbum;
+    request
+      .post(`/users/${userId}/albums`)
+      .set(authorizationToken)
+      .then(async response => {
+        expect(response.statusCode).toBe(200);
+        expect(await getAlbums(userId)).tobe(response.body);
+      });
+  });
+
+  it('Get buyed albums without authorization token', () => {
+    const { userId } = mockUserAlbum;
+    request.post(`/users/${userId}/albums`).then(response => {
+      expect(response.body).to.include(validationUserError);
+      expect(response.body.message).to.include('The authorization token is required');
+      expect(response.statusCode).toBe(400);
+    });
+  });
+});
+
+describe('Test /users/albums/:id/photos', () => {
+  it('Get photos of buyed albums without authorization token', () => {
+    const { userId } = mockUserAlbum;
+    request.post(`/users/albums/${userId}/photos`).then(response => {
+      expect(response.body).to.include(validationUserError);
+      expect(response.body.message).to.include('The authorization token is required');
+      expect(response.statusCode).toBe(400);
+    });
+  });
+
+  it('Get photos of buyed albums', () => {
+    const { userId } = mockUserAlbum;
+    request
+      .post(`/users/albums/${userId}/photos`)
+      .set(authorizationToken)
+      .then(async response => {
+        expect(response.statusCode).toBe(200);
+        expect(await getPhotos()).tobe(response.body);
       });
   });
 });

@@ -11,6 +11,7 @@ const {
 } = require('./mocks/user');
 const { validationUserError, tokenError } = require('../app/errors');
 const { User } = require('../app/models');
+const { invalidateAllSessions } = require('../app/services/expirationToken');
 const { createToken } = require('../app/helpers/jwt');
 
 const request = supertest(app);
@@ -77,6 +78,18 @@ describe('Test /users', () => {
         expect(response.statusCode).toBe(200);
       });
   });
+
+  it('GET /users with authorization token expired', () => {
+    request
+      .get('/users')
+      .set(authorizationToken)
+      .then(invalidateAllSessions())
+      .then(response => {
+        expect(response.body).to.include(validationUserError);
+        expect(response.body.message).to.include('The token was expired');
+        expect(response.statusCode).toBe(400);
+      });
+  });
 });
 
 describe('Test /users/sessions', () => {
@@ -113,6 +126,28 @@ describe('Test /admin/users', () => {
           `The user ${mockUserAdmin.name} ${mockUserAdmin.lastName} now is admin`
         );
         expect(response.statusCode).toBe(200);
+      });
+  });
+});
+
+describe('Expiration token', () => {
+  it('Request authorization token', () => {
+    request
+      .post('/users/sessions')
+      .send(mockUserAdmin)
+      .then(response => {
+        expect(response.body).to.include(createToken(mockUser));
+        expect(response.statusCode).toBe(200);
+      });
+  });
+
+  it('GET /users authorization token with expedation date invalid', () => {
+    request
+      .get('/users')
+      .set(authorizationToken)
+      .then(response => {
+        expect(response.body.message).toBe('The token was expired');
+        expect(response.statusCode).toBe(400);
       });
   });
 });

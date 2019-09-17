@@ -1,4 +1,5 @@
 const { signUp, findUserByEmail, getUsers, updateIsAdminUser } = require('../services/users');
+const { invalidateAllSessions } = require('../services/expirationToken');
 const { encryptPassword } = require('../helpers/bcrypt');
 const { createToken } = require('../helpers/jwt');
 
@@ -17,7 +18,7 @@ const signUpRequest = (req, res, next) => {
 const signInRequest = (req, res) => {
   const { user } = req;
 
-  res.send({ token: createToken(user) });
+  res.send(createToken(user));
 };
 
 const getUsersRequest = (req, res, next) => {
@@ -48,9 +49,15 @@ const userAdminRequest = async (req, res, next) => {
     .catch(next);
 };
 
+const invalidateAllSessionRequest = (req, res, next) =>
+  invalidateAllSessions()
+    .then(res.send('All tokens was deactivated'))
+    .catch(next);
+
 module.exports = {
   signUpRequest,
   signInRequest,
   getUsersRequest,
-  userAdminRequest
+  userAdminRequest,
+  invalidateAllSessionRequest
 };
