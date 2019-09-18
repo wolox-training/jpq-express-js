@@ -7,9 +7,9 @@ const validateUser = async (req, res, next) => {
 
   const user = await findUserByEmail(email);
 
-  if (user !== null) next(validationUserError(`The email ${email} already exists`));
+  if (user !== null) return next(validationUserError(`The email ${email} already exists`));
 
-  next();
+  return next();
 };
 
 const userIsAuth = (req, res, next) => {
@@ -23,19 +23,28 @@ const userIsAuth = (req, res, next) => {
 };
 
 const validateAdminUser = async (req, res, next) => {
-  if (!req.user.isAdmin) next(validationUserError('The user must be admin'));
+  if (!req.user.isAdmin) return next(validationUserError('The user must be admin'));
 
   const { email } = req.body;
 
   const user = await findUserByEmail(email);
 
-  if (user !== null && user.isAdmin) next(validationUserError('The user is admin'));
+  if (user !== null && user.isAdmin) return next(validationUserError('The user is admin'));
 
-  next();
+  return next();
+};
+
+const validateUserId = (req, res, next) => {
+  const { id } = req.params;
+
+  if (!id) return next('The userId is a required param');
+
+  return next();
 };
 
 module.exports = {
   validateUser,
   userIsAuth,
-  validateAdminUser
+  validateAdminUser,
+  validateUserId
 };
